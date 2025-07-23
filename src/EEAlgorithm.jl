@@ -43,7 +43,7 @@ Calculate the dij distance between two ``e^+e^-``jets.
     @inbounds min(eereco[i].E2p, eereco[j].E2p) * dij_factor * eereco[i].nndist
 end
 
-function get_angular_nearest_neighbours!(eereco, algorithm, dij_factor, beta = 1.0)
+function get_angular_nearest_neighbours!(eereco, algorithm, dij_factor, beta = 1.0, gamma = 1.0)
     # Use beta for Valencia beam distance calculation
     # Get the initial nearest neighbours for each jet
     N = length(eereco)
@@ -85,7 +85,7 @@ function get_angular_nearest_neighbours!(eereco, algorithm, dij_factor, beta = 1
             E2beta = E^(2 * beta)                    
             cosθ = abs(eereco[i].nz)              
             sin2θ = 1.0 - cosθ^2                     
-            beam_dist = E2beta * sin2θ^beta
+            beam_dist = E2beta * sin2θ^gamma
             if beam_dist < eereco[i].dijdist
                 eereco.dijdist[i] = beam_dist
                 eereco.nni[i] = 0
@@ -237,7 +237,7 @@ explicitly.
 """
 function ee_genkt_algorithm(particles::AbstractVector{T}; p = 1,
                             algorithm::JetAlgorithm.Algorithm = JetAlgorithm.Durham,
-                            R = 4.0, beta = 1.0, recombine = addjets, preprocess = nothing) where {T}
+                            R = 4.0, beta = 1.0, gamma = 1.0, recombine = addjets, preprocess = nothing) where {T}
 
     # Check for consistency between algorithm and power
     (p, algorithm) = get_algorithm_power_consistency(p = p, algorithm = algorithm)
@@ -290,7 +290,7 @@ end
 This function is the actual implementation of the e+e- jet clustering algorithm.
 """
 function _ee_genkt_algorithm(; particles::AbstractVector{EEJet}, p = 1, R = 4.0,
-                             algorithm::JetAlgorithm.Algorithm = JetAlgorithm.Durham, beta = 1.0,
+                             algorithm::JetAlgorithm.Algorithm = JetAlgorithm.Durham, beta = 1.0, gamma = 1.0,
                              recombine = addjets)
     # Bounds
     N::Int = length(particles)

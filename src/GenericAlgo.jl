@@ -72,7 +72,7 @@ jet_reconstruct(particles; algorithm = JetAlgorithm.AntiKt, R = 1.0, preprocess 
 """
 function jet_reconstruct(particles::AbstractVector; p::Union{Real, Nothing} = nothing,
                          algorithm::Union{JetAlgorithm.Algorithm, Nothing} = nothing,
-                         R = 1.0, recombine = addjets, preprocess = nothing,
+                         R = 1.0, beta = nothing, gamma = nothing, recombine = addjets, preprocess = nothing,
                          strategy::RecoStrategy.Strategy = RecoStrategy.Best)
 
     # Either map to the fixed algorithm corresponding to the strategy
@@ -94,6 +94,8 @@ function jet_reconstruct(particles::AbstractVector; p::Union{Real, Nothing} = no
             throw(ErrorException("Invalid strategy: $(strategy)"))
         end
     elseif is_ee(algorithm)
+        alg = ee_genkt_algorithm
+    elseif algorithm == JetAlgorithm.Valencia
         alg = ee_genkt_algorithm
     end
 
